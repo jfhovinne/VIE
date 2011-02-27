@@ -4,7 +4,8 @@
  */
 var VieEditable = {
     options: {
-
+        editor: false,
+        stylesheet: false
 	},
 
     editors: {
@@ -12,13 +13,14 @@ var VieEditable = {
             enableEditable: function(elem) {
                 var containerInstance = VIE.ContainerManager.getInstanceForContainer(jQuery(elem));
 			    containerInstance.editables = {};
+
                 jQuery(elem).find('[property]').each(function() {
+                
                     var containerProperty = jQuery(this);
 				    var propertyName = containerProperty.attr('property');
 				    if (containerProperty.is('div')) {
 					    containerProperty.wymeditor({
 						    html: containerProperty.html(),
-						    stylesheet: 'vie-wymeditor-stylesheet.css',
 						    postInit: function (wym) {
 							    containerInstance.editables[propertyName] = wym;
 							    wym.vieContainerInstance = containerInstance;
