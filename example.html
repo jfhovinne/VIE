@@ -32,7 +32,10 @@
 
                 // Make all RDFa entities editable
                 jQuery('[typeof][about]').each(function() {
-                    jQuery(this).vieEditable({editor: 'wymeditor'});
+                    jQuery(this).vieEditable({
+                        editor: 'wymeditor',
+                        skin: 'minimal'
+                    });
                 });
 
                 jQuery('#savebutton').bind('click', function() {

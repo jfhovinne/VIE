@@ -4,8 +4,7 @@
  */
 var VieEditable = {
     options: {
-        editor: false,
-        stylesheet: false
+        editor: false
     },
 
     editors: {
@@ -18,14 +17,15 @@ var VieEditable = {
                 
                     var containerProperty = jQuery(this);
                     var propertyName = containerProperty.attr('property');
+                    
                     if (containerProperty.is('div')) {
-                        containerProperty.wymeditor({
+                        containerProperty.wymeditor(jQuery.extend(o.options, {
                             html: containerProperty.html(),
                             postInit: function (wym) {
                                 containerInstance.editables[propertyName] = wym;
                                 wym.vieContainerInstance = containerInstance;
                             }
-                        });
+                        }));
                     }
                 });
             },
