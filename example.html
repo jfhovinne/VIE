@@ -5,9 +5,15 @@
     xmlns:dcterms="http://purl.org/dc/terms/">
     <head>
         <title>VIE example</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="js/underscore-min.js"></script>
+        <script src="js/backbone-min.js"></script>
+        <script src="js/vie-containermanager.js"></script>
+        <script src="js/vie-collectionmanager.js"></script>
+        <script src="js/jquery.vie.editable.js"></script>
+        <script src="js/wymeditor/jquery.wymeditor.min.js"></script>
         <script>
-            GENTICS_Aloha_base = 'http://aloha-editor.org/aloha-0.9.3/aloha/';
 
             jQuery(document).ready(function() {
 
@@ -26,30 +32,11 @@
 
                 // Make all RDFa entities editable
                 jQuery('[typeof][about]').each(function() {
-                    jQuery(this).vieSemanticAloha();
+                    jQuery(this).vieEditable({editor: 'wymeditor'});
                 });
 
                 jQuery('#savebutton').bind('click', function() {
-                    // Go through all Backbone model instances loaded for the page
-                    jQuery.each(VIE.ContainerManager.instances, function(index, objectInstance) {
-                        if (!VIE.AlohaEditable.refreshFromEditables(objectInstance)) {
-                            // No changes to this object, skip
-                            return true;
-                        }               
 
-                        // Set the modified properties to the model instance
-                        objectInstance.save(null, {
-                            success: function(savedModel, response) {
-                                alert(savedModel.id + " was saved, see JS console for details");
-                                jQuery.each(modifiedProperties, function(propertyName, propertyValue) {
-                                    savedModel.editables[propertyName].setUnmodified();
-                                });
-                            },
-                            error: function(response) {
-                                console.log("Save failed");
-                            }
-                        });
-                    });
                 });
 
                 jQuery('#tweakbutton').bind('click', function() {
@@ -57,14 +44,7 @@
                 });
             });
         </script>
-        <script src="http://aloha-editor.org/aloha-0.9.3/aloha/aloha.js"></script>
-        <script src="http://aloha-editor.org/aloha-0.9.3/aloha/plugins/com.gentics.aloha.plugins.Format/plugin.js"></script>
-        <script src="http://aloha-editor.org/aloha-0.9.3/aloha/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js"></script>
-        <script src="underscore-min.js"></script>
-        <script src="backbone-min.js"></script>
-        <script src="vie-containermanager.js"></script>
-        <script src="vie-collectionmanager.js"></script>
-        <script src="vie-aloha.js"></script>
+
     </head>
     <body>
         <p>Click on the content below to edit it, then <button id="savebutton">Save</button>, <button id="addbutton">Add items</button> or <button id="tweakbutton">Change via JS</button>.</p>
