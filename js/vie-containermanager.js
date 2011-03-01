@@ -9,11 +9,15 @@ VIE.ContainerManager = {
     instanceSingletons: {},
 
     findContainerProperties: function(element, allowPropertiesInProperties) {
+        if (!element.attr('typeof')) {
+            element = element.children('[typeof][about]');
+        }
         return jQuery(element).find('[property]').add(jQuery(element).filter('[property]')).filter(function() {
             var closestRDFaEntity = jQuery(this).closest('[typeof][about]');
             if (   closestRDFaEntity.index(element) !== 0
                 && closestRDFaEntity.length !== 0) {
                 // The property is under another entity, skip
+                console.log("Wrong entity", element, closestRDFaEntity, this);
                 return false;
             }
 
@@ -98,7 +102,7 @@ VIE.ContainerManager = {
             // Direct match with container
             element.attr('about', '');
         }
-        element.find('[about]').attr('about', '#example');
+        element.find('[about]').attr('about', '');
         VIE.ContainerManager.findContainerProperties(element, false).html('');
 
         return element;
@@ -140,6 +144,8 @@ VIE.ContainerManager = {
             return this;
         };
 
+        VIE.ContainerManager.findAdditionalViewProperties(element, viewProperties);
+
         VIE.ContainerManager.views[type] = Backbone.View.extend(viewProperties);
 
         return VIE.ContainerManager.views[type];
@@ -147,6 +153,7 @@ VIE.ContainerManager = {
 
     getModelForContainer: function(element) {
         var type = VIE.ContainerManager._getContainerValue(element, 'typeof');
+        
 
         if (typeof VIE.ContainerManager.models[type] !== 'undefined') {
             // We already have a model for this type
@@ -167,12 +174,11 @@ VIE.ContainerManager = {
 
             // This can have only one type here, in rdf more types can be allowed
             instanceLD.a = instance.getType();
-            for(var property in instance.attributes) if(instance.attributes.hasOwnProperty(property)){ //  && typeof instance.attributes[property] != "function"
-                if(["id"].indexOf(property) == -1)
+            for (var property in instance.attributes) if(instance.attributes.hasOwnProperty(property)) { //  && typeof instance.attributes[property] != "function"
+                if (["id"].indexOf(property) == -1)
                     instanceLD[property] = instance.attributes[property];
             }
-            console.info(instance.attributes);
-            return JSON.stringify(instanceLD);
+            return instanceLD;
         }
 
         modelProperties.getInstanceForJSONLD = function(){}
@@ -182,6 +188,12 @@ VIE.ContainerManager = {
         VIE.ContainerManager.models[type] = Backbone.Model.extend(modelProperties);
 
         return VIE.ContainerManager.models[type];
+    },
+
+    /**
+     * Override this to seek additional information from the element to include to the view
+     */
+    findAdditionalViewProperties: function(element, properties) {
     },
 
     /**
